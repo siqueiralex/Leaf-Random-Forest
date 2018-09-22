@@ -10,7 +10,7 @@ warnings.filterwarnings("ignore")
 import numpy as np
 
 
-rand_st = 7
+rand_st = 17
 conf_mat = np.zeros((30, 30), dtype=np.int)
 my_data = np.genfromtxt('leaf/leaf.csv', delimiter=',')
 shuffled = []
@@ -218,6 +218,5 @@ for i in range(15):
 for i in range(15,30):
     print("Precisão da classe", i+7,"=", hit_rate[i])    
 
-
-print(conf_mat)
+print("Média de precisão para todas as classes:", hit_rate.mean())
 
