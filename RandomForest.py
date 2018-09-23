@@ -9,10 +9,14 @@ import warnings
 warnings.filterwarnings("ignore")
 import numpy as np
 
-
+# Selecionando um estado randômico para todos os testes/comparações
 rand_st = 17
+
+#Carregand o Corpus
 conf_mat = np.zeros((30, 30), dtype=np.int)
 my_data = np.genfromtxt('leaf/leaf.csv', delimiter=',')
+
+#Embaralhando o Corpus
 shuffled = []
 while len(my_data) > 0:
     for n in range(1,37):
@@ -20,28 +24,37 @@ while len(my_data) > 0:
             if int(my_data[i,0])==n:
                 shuffled.append(my_data.take(i, axis=0))
                 my_data = np.delete(my_data, i, axis=0)
-                break
-                
+                break                
 shuffled = np.array(shuffled)
+
+
+count = np.zeros(37, dtype=np.int)
+classes = shuffled[:,:1].astype(int)
+for item in classes:
+    count[item]+=1
+print("Número de elementos em cada classe:")
+for class_ in count.nonzero()[0]:
+    print("Classe",class_,":",count[class_])
+
+# Fazendo cross-validation automático do sklearn, tirano a precisão    
 y = shuffled[:,:1].astype(int).ravel()
 X = shuffled[:,2:]
-
-
-
 clf = RandomForestClassifier(random_state=rand_st)
-scoring = ['precision_macro', 'recall_macro']
+scoring = ['precision_macro']
 scores = cross_validate(clf, X, y, cv=10, scoring=scoring)
 print("Média da acurácia:",scores['test_precision_macro'].mean())
 
+# Fazendo cross validation automatico normalizando as duas colunas que tem valores maiores que 1
 norm_X = X
 norm_X[:,1] = normalize(X[:,1].reshape((-1,1)), axis=0).reshape((-1,))
 norm_X[:,-1] = normalize(X[:,-1].reshape((-1,1)), axis=0).reshape((-1,))
 n_clf = RandomForestClassifier(random_state=rand_st)
-scoring = ['precision_macro', 'recall_macro']
+scoring = ['precision_macro']
 n_scores = cross_validate(n_clf, norm_X, y, cv=10, scoring=scoring)
 print("Média da acurácia com corpus normalizado:",n_scores['test_precision_macro'].mean())
 
 
+# Fazendo validação cruzada manualmente, para ter acesso a valores de precisão por classe
 
 test = shuffled[0:34]
 train = shuffled[34:]
@@ -54,6 +67,7 @@ u_clf.fit(X_train, y_train)
 y_pred = u_clf.predict(X_test)
 print("Primeira fatia:")
 print(classification_report(y_test, y_pred)) 
+print("Clases testadas:",y_test)
 print()
 print()
 conf_mat += confusion_matrix(y_test, y_pred, labels=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36])
@@ -71,6 +85,7 @@ u_clf.fit(X_train, y_train)
 y_pred = u_clf.predict(X_test)
 print("Segunda fatia:")
 print(classification_report(y_test, y_pred)) 
+print("Clases testadas:",y_test)
 print()
 print()
 conf_mat += confusion_matrix(y_test, y_pred, labels=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36])
@@ -88,6 +103,7 @@ u_clf.fit(X_train, y_train)
 y_pred = u_clf.predict(X_test)
 print("Terceira fatia:")
 print(classification_report(y_test, y_pred)) 
+print("Clases testadas:",y_test)
 print()
 print()
 conf_mat += confusion_matrix(y_test, y_pred, labels=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36])
@@ -104,6 +120,7 @@ u_clf.fit(X_train, y_train)
 y_pred = u_clf.predict(X_test)
 print("Quarta fatia:")
 print(classification_report(y_test, y_pred)) 
+print("Clases testadas:",y_test)
 print()
 print()
 conf_mat += confusion_matrix(y_test, y_pred, labels=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36])
@@ -120,6 +137,7 @@ u_clf.fit(X_train, y_train)
 y_pred = u_clf.predict(X_test)
 print("Quinta fatia:")
 print(classification_report(y_test, y_pred)) 
+print("Clases testadas:",y_test)
 print()
 print()
 conf_mat += confusion_matrix(y_test, y_pred, labels=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36])
@@ -136,6 +154,7 @@ u_clf.fit(X_train, y_train)
 y_pred = u_clf.predict(X_test)
 print("Sexta fatia:")
 print(classification_report(y_test, y_pred)) 
+print("Clases testadas:",y_test)
 print()
 print()
 conf_mat += confusion_matrix(y_test, y_pred, labels=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36])
@@ -152,6 +171,7 @@ u_clf.fit(X_train, y_train)
 y_pred = u_clf.predict(X_test)
 print("Sétima fatia:")
 print(classification_report(y_test, y_pred)) 
+print("Clases testadas:",y_test)
 print()
 print()
 conf_mat += confusion_matrix(y_test, y_pred, labels=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36])
@@ -168,6 +188,7 @@ u_clf.fit(X_train, y_train)
 y_pred = u_clf.predict(X_test)
 print("Oitava fatia:")
 print(classification_report(y_test, y_pred)) 
+print("Clases testadas:",y_test)
 print()
 print()
 conf_mat += confusion_matrix(y_test, y_pred, labels=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36])
@@ -184,6 +205,7 @@ u_clf.fit(X_train, y_train)
 y_pred = u_clf.predict(X_test)
 print("Nona fatia:")
 print(classification_report(y_test, y_pred)) 
+print("Clases testadas:",y_test)
 print()
 print() 
 conf_mat += confusion_matrix(y_test, y_pred, labels=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36])
@@ -200,11 +222,13 @@ u_clf.fit(X_train, y_train)
 y_pred = u_clf.predict(X_test)
 print("Décima fatia:")
 print(classification_report(y_test, y_pred)) 
+print("Clases testadas:",y_test)
 print()
 print()
 conf_mat += confusion_matrix(y_test, y_pred, labels=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36])
 
 
+# Calculando precisão por classe
 hit_rate = np.zeros(30)
 for i in range(30):
     sum = 0
